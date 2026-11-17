@@ -1,0 +1,45 @@
+<!doctype html>
+<!--
+  Budgeteo bank return page (spec § 5.3).
+
+  Enable Banking only accepts an https redirect URL in production. The user publishes this page
+  (for example with GitHub Pages) and registers its address in their Enable Banking application.
+  After the login at the bank, the page sends the browser on to budgeteo://callback with the same
+  parameters, which hands them to the app. It loads nothing and sends nothing anywhere.
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Retour vers Budgeteo</title>
+  <style>
+    :root { color-scheme: light dark; --accent: #1a9e6e; }
+    body { font: 17px/1.5 -apple-system, system-ui, sans-serif; max-width: 34em; margin: 0 auto; padding: 3em 1em; }
+    h1 { font-size: 1.4em; }
+    a.button, button { display: inline-block; background: var(--accent); color: white; border: 0; border-radius: 10px;
+      padding: .7em 1.2em; font: inherit; text-decoration: none; cursor: pointer; }
+    textarea { width: 100%; box-sizing: border-box; font: 13px ui-monospace, monospace; margin: .5em 0; }
+    .hint { opacity: .7; font-size: .9em; }
+  </style>
+</head>
+<body>
+  <h1 id="title">Retour vers Budgeteo…</h1>
+  <p><a class="button" id="open" href="budgeteo://callback">Ouvrir Budgeteo</a></p>
+  <p class="hint">Si Budgeteo ne s'ouvre pas, copiez cette adresse et collez-la dans Budgeteo, dans la fenêtre « Connecter une banque » :</p>
+  <textarea id="address" rows="4" readonly></textarea>
+  <button id="copy" type="button">Copier l'adresse</button>
+  <script>
+    const parameters = new URLSearchParams(location.search);
+    const appLink = "budgeteo://callback" + location.search;
+    document.getElementById("open").href = appLink;
+    document.getElementById("address").value = location.href;
+    document.getElementById("copy").onclick = () => navigator.clipboard.writeText(location.href);
+    if (parameters.has("code") || parameters.has("error")) {
+      location.replace(appLink);
+    } else {
+      document.getElementById("title").textContent = "Page de retour de Budgeteo";
+    }
+  </script>
+</body>
+</html>
